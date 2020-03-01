@@ -1,10 +1,9 @@
 package com.psu.map;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.room.Room;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -14,16 +13,23 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.psu.map.Dao.App;
+import com.psu.map.Dao.AppDatabase;
+import com.psu.map.Entity.MapMarker;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Marker marker;
-    private SQLiteDatabase db;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -31,30 +37,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        db = getBaseContext().openOrCreateDatabase("app.db", MODE_PRIVATE, null);
-        db.execSQL("CREATE TABLE IF NOT EXISTS markers (latitude REAL, longitude REAL, comment TEXT, image TEXT)");
-    }
+        db = App.getInstance().getDatabase();
+
+        }
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Cursor query = db.rawQuery("SELECT * FROM markers;", null);
 
-        mMap = googleMap;
-        if(query.moveToFirst()){
-            do{
-                marker = mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(query.getDouble(0),query.getDouble(1)))
-                        .anchor(0.5f, 0.5f)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-            }
-            while(query.moveToNext());
-        }
-        query.close();
+        fillMap(googleMap);
+
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                db.execSQL("INSERT INTO markers VALUES ('" + latLng.latitude + "' , '" + latLng.longitude + "' , ' ' , ' ') ;");
+
+                db.markerDao().insertAll(new MapMarker(latLng.latitude, latLng.longitude));
+
                 marker = mMap.addMarker(new MarkerOptions()
                         .position(latLng)
                         .anchor(0.5f, 0.5f)
@@ -63,6 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
             @Override
             public boolean onMarkerClick(Marker marker) {
                 markerInfo(marker.getPosition());
@@ -71,13 +70,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    /*
-        Add info about marker
-     */
-    public void markerInfo(LatLng latLng){
+    private void fillMap(GoogleMap googleMap){
+        List<MapMarker> mapMarkers = db.markerDao().getAll();
+        mMap = googleMap;
+
+        mapMarkers.forEach(mapMarker -> {
+            marker = mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(mapMarker.latitude,mapMarker.longitude))
+                    .anchor(0.5f, 0.5f)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        });
+    }
+
+    private void markerInfo(LatLng latLng){
+
         Intent intent = new Intent(this, MarkerInfoActivity.class);
-        intent.putExtra("latitude", Double.toString(latLng.latitude));
-        intent.putExtra("longitude", Double.toString(latLng.longitude));
+
+        intent.putExtra("latitude", latLng.latitude);
+        intent.putExtra("longitude", latLng.longitude);
+
         startActivity(intent);
     }
 }
