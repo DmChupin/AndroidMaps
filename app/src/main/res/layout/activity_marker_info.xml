@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MarkerInfoActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/content_marker_info" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="?attr/colorPrimary"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        app:layout_anchor="@+id/appBarLayout"
+        app:layout_anchorGravity="center"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="393dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="240dp"
+        android:layout_marginRight="10dp"
+        android:scaleType="centerInside" />
+
+    <TextView
+        android:id="@+id/lbPosition"
+        android:layout_width="94dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="80dp"
+        android:text="Координаты:"
+        android:textColor="?attr/colorPrimary" />
+
+    <EditText
+        android:id="@+id/textViewPosition"
+        android:layout_width="238dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="100dp"
+        android:editable="false"
+        android:textSize="16sp"
+        android:textStyle="normal" />
+
+    <TextView
+        android:id="@+id/lbComment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="150dp"
+        android:text="Комментарий:"
+        android:textColor="?attr/colorPrimary" />
+
+    <EditText
+        android:id="@+id/textViewComment"
+        android:layout_width="388dp"
+        android:layout_height="69dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="160dp"
+        android:layout_marginRight="10dp"
+        android:editable="true"
+        android:inputType="textMultiLine"
+        android:text="Отсутствует"
+        android:textIsSelectable="false"
+        android:textSize="16sp"
+        android:textStyle="normal" />
+
+    <Button
+        android:id="@+id/btSave"
+        android:layout_width="161dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="@dimen/fab_margin"
+        android:backgroundTint="?attr/colorPrimary"
+        android:baselineAligned="false"
+        android:text="Сохранить"
+        android:textColorHint="#00C70606" />
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
